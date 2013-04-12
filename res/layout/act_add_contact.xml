@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <LinearLayout
+        android:id="@+id/addcontact_controlbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true" >
+
+        <Button
+            android:id="@+id/addcontact_save"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="保存" />
+
+        <Button
+            android:id="@+id/addcontact_cancel"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="取消" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/addcontact_controlbar"
+        android:layout_alignParentTop="true"
+        android:orientation="vertical"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin" >
+
+        <EditText
+            android:id="@+id/addcontact_name"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:hint="姓名"
+            android:inputType="text"
+            android:singleLine="true"
+            android:text="唐愚蠢" />
+
+        <EditText
+            android:id="@+id/addcontact_account"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:hint="SIP 帐号"
+            android:inputType="text"
+            android:singleLine="true"
+            android:text="isvia001@iptel.org" />
+    </LinearLayout>
+
+</RelativeLayout>
