@@ -2,10 +2,13 @@ package xmu.ontheway.andsip;
 
 import xmu.ontheway.andsip.app.SipApplication;
 import xmu.ontheway.andsip.bean.Contact;
+import xmu.ontheway.andsip.ring.PlayRing;
 import xmu.ontheway.andsip.util.UIUtils;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.media.AudioManager;
 import android.net.sip.SipAudioCall;
 import android.net.sip.SipException;
 import android.net.sip.SipManager;
@@ -20,10 +23,12 @@ import android.widget.TextView;
 @SuppressLint("NewApi")
 public class ActCall extends Activity {
 	private static final String TAG = "ActCall";
-	private Button btnEnd;
+	private Button btnEnd, btnStart, btnSpeakeron;
 	private TextView tvStatus;
 
 	private Contact mContact;
+
+	private boolean isSpeakeron = false;
 
 	public SipAudioCall call = null;
 	public InComingCallReceiver callReceiver;
@@ -44,10 +49,14 @@ public class ActCall extends Activity {
 		}
 		mContact = (Contact) intent.getSerializableExtra("contact");
 		if (mContact != null) {// 呼叫对方
+			btnStart.setVisibility(View.GONE);
+
 			startCalling(mContact);
 		} else {// 接受来电
 			Log.e(TAG, "接收来电");
-			answerIncomingCall(intent);
+			btnEnd.setVisibility(View.GONE);
+			// 响铃
+			PlayRing.play(this);
 		}
 	}
 
@@ -70,9 +79,8 @@ public class ActCall extends Activity {
 			Log.e(TAG, "通话建立成功...");
 			call.startAudio();
 			call.setSpeakerMode(true);
-			if (call.isMuted()) {
+			if (call.isMuted())
 				call.toggleMute();
-			}
 			updateStatus(call);
 		}
 
@@ -92,8 +100,7 @@ public class ActCall extends Activity {
 		}
 
 		@Override
-		public void onError(SipAudioCall call, int errorCode,
-				String errorMessage) {
+		public void onError(SipAudioCall call, int errorCode, String errorMessage) {
 			Log.e("TEST", "呼叫出错 " + errorCode + " " + errorMessage);
 			updateStatus("onError呼叫出错:" + errorCode + " " + errorMessage);
 			endCalling();
@@ -133,8 +140,7 @@ public class ActCall extends Activity {
 		Log.e("TEST", "注册成功,开始呼叫对方");
 
 		try {
-			call = mApplication.sipStartCalling(contact.getAccount(),
-					callListener);
+			call = mApplication.sipStartCalling(contact.getAccount(), callListener);
 		} catch (SipException e) {
 			Log.e(TAG, "呼叫对方失败 ----" + e.getMessage());
 			endCalling();
@@ -168,8 +174,7 @@ public class ActCall extends Activity {
 					}
 				}
 			};
-			call = mApplication.getSipManager().takeAudioCall(callIntent,
-					listener);
+			call = mApplication.getSipManager().takeAudioCall(callIntent, listener);
 			Log.e(TAG, "开始接听电话");
 			call.answerCall(30);
 			call.startAudio();
@@ -202,13 +207,63 @@ public class ActCall extends Activity {
 	}
 
 	private void initViews() {
-		btnEnd = (Button) findViewById(R.id.call_btn_end);
 		tvStatus = (TextView) findViewById(R.id.call_tv_status);
 
+		btnStart = (Button) findViewById(R.id.call_btn_start);
+		btnStart.setOnClickListener(new View.OnClickListener() {
+			public void onClick(View arg0) {
+				btnStart.setVisibility(View.GONE);
+				btnEnd.setVisibility(View.VISIBLE);
+
+				PlayRing.stop();
+				answerIncomingCall(getIntent());
+			}
+		});
+
+		btnEnd = (Button) findViewById(R.id.call_btn_end);
 		btnEnd.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View arg0) {
 				endCalling();
 				finish();
+			}
+		});
+
+		btnSpeakeron = (Button) findViewById(R.id.call_btn_speakeron);
+		btnSpeakeron.setOnClickListener(new View.OnClickListener() {
+			public void onClick(View arg0) {
+				try {
+					AudioManager audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+					int currVolume = audioManager.getStreamVolume(AudioManager.STREAM_VOICE_CALL);
+
+					if (!isSpeakeron) {
+						btnSpeakeron.setText("关闭免提");
+
+						audioManager.setMode(AudioManager.ROUTE_SPEAKER);
+
+						if (!audioManager.isSpeakerphoneOn()) {
+							audioManager.setSpeakerphoneOn(true);
+
+							audioManager.setStreamVolume(AudioManager.STREAM_VOICE_CALL,
+									audioManager.getStreamMaxVolume(AudioManager.STREAM_VOICE_CALL),
+									AudioManager.STREAM_VOICE_CALL);
+						}
+					} else {
+
+						btnSpeakeron.setText("打开免提");
+
+						if (audioManager.isSpeakerphoneOn()) {
+							audioManager.setSpeakerphoneOn(false);
+							audioManager.setStreamVolume(AudioManager.STREAM_VOICE_CALL, currVolume,
+									AudioManager.STREAM_VOICE_CALL);
+						}
+					}
+
+					isSpeakeron = !isSpeakeron;
+
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+
 			}
 		});
 	}

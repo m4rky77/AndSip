@@ -2,23 +2,23 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
 
     <EditTextPreference
-        android:name="SIP Username"
+        android:name="SIP账号"
         android:defaultValue=""
         android:key="namePref"
-        android:summary="Username for your SIP Account"
-        android:title="Enter Username" />
+        android:summary="sip账号的用户名"
+        android:title="输入用户名" />
     <EditTextPreference
-        android:name="SIP Domain"
+        android:name="SIP域名"
         android:defaultValue=""
         android:key="domainPref"
-        android:summary="Domain for your SIP Account"
-        android:title="Enter Domain" />
+        android:summary="sip账号的域名"
+        android:title="输入域名" />
     <EditTextPreference
-        android:name="SIP Password"
+        android:name="SIP密码"
         android:defaultValue=""
         android:key="passPref"
         android:password="true"
-        android:summary="Password for your SIP Account"
-        android:title="Enter Password" />
+        android:summary="sip账号的密码"
+        android:title="输入密码" />
 
 </PreferenceScreen>

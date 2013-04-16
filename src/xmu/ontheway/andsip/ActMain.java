@@ -21,7 +21,6 @@ public class ActMain extends TabActivity {
 
 	private TabHost mTabHost;
 	private ProgressBar progressBar;
-	private Button btnLogin;
 	private TextView tvStatus;
 	private View head;
 
@@ -47,14 +46,12 @@ public class ActMain extends TabActivity {
 		}
 		SipRegistrationListener registrationListener = new SipRegistrationListener() {
 			@Override
-			public void onRegistrationFailed(String localProfileUri,
-					int errorCode, String errorMessage) {
+			public void onRegistrationFailed(String localProfileUri, int errorCode, String errorMessage) {
 				updateRegisterStatus(-1);
 			}
 
 			@Override
-			public void onRegistrationDone(String localProfileUri,
-					long expiryTime) {
+			public void onRegistrationDone(String localProfileUri, long expiryTime) {
 				updateRegisterStatus(1);
 			}
 
@@ -80,7 +77,6 @@ public class ActMain extends TabActivity {
 					mApplication.setRegistered(false);
 					mTabHost.setClickable(false);
 					progressBar.setVisibility(View.VISIBLE);
-					btnLogin.setVisibility(View.INVISIBLE);
 					tvStatus.setText("正在登录...");
 				} else if (status == 1) {// 注册成功
 					mTabHost.setVisibility(View.VISIBLE);
@@ -92,7 +88,6 @@ public class ActMain extends TabActivity {
 					mApplication.setRegistered(false);
 					mTabHost.setClickable(false);
 					progressBar.setVisibility(View.INVISIBLE);
-					btnLogin.setVisibility(View.VISIBLE);
 					tvStatus.setText("登录失败");
 				}
 			}
@@ -102,7 +97,6 @@ public class ActMain extends TabActivity {
 	private void initViews() {
 		head = findViewById(R.id.main_head);
 		progressBar = (ProgressBar) head.findViewById(R.id.main_progressbar);
-		btnLogin = (Button) head.findViewById(R.id.main_btn_login);
 		tvStatus = (TextView) head.findViewById(R.id.main_register_status);
 
 		// mTabHost = (TabHost) findViewById(android.R.id.tabhost);
@@ -111,13 +105,10 @@ public class ActMain extends TabActivity {
 		mTabHost = this.getTabHost();
 
 		Resources res = getResources();
-		mTabHost.addTab(mTabHost.newTabSpec("record")
-				.setIndicator("通话记录", res.getDrawable(R.drawable.img_call))
-				.setContent(new Intent(this, ActRecord.class)));
-
-		mTabHost.addTab(mTabHost.newTabSpec("contact")
-				.setIndicator("通讯录", res.getDrawable(R.drawable.img_contacts))
+		mTabHost.addTab(mTabHost.newTabSpec("contact").setIndicator("通讯录", res.getDrawable(R.drawable.img_contacts))
 				.setContent(new Intent(this, ActContact.class)));
+		mTabHost.addTab(mTabHost.newTabSpec("record").setIndicator("通话记录", res.getDrawable(R.drawable.img_call))
+				.setContent(new Intent(this, ActRecord.class)));
 
 		// mTabHost.addTab(mTabHost.newTabSpec("message").setIndicator("Message")
 		// .setContent(new Intent(this, ActMessage.class)));
@@ -128,12 +119,6 @@ public class ActMain extends TabActivity {
 
 		mTabHost.setCurrentTab(0);
 
-		btnLogin.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				startRegistration();
-			}
-		});
 	}
 
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -144,8 +129,7 @@ public class ActMain extends TabActivity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case 0:
-			Intent settingsActivity = new Intent(getBaseContext(),
-					ActSettings.class);
+			Intent settingsActivity = new Intent(getBaseContext(), ActSettings.class);
 			startActivity(settingsActivity);
 			break;
 		}

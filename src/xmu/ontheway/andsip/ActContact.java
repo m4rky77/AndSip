@@ -45,18 +45,15 @@ public class ActContact extends Activity implements View.OnClickListener {
 
 		getContacts();
 		btnAdd.setOnClickListener(this);
-		lvContact
-				.setOnCreateContextMenuListener(new OnCreateContextMenuListener() {
-					@Override
-					public void onCreateContextMenu(ContextMenu menu, View v,
-							ContextMenuInfo menuInfo) {
-						menu.add(0, 0, 0, "删除联系人");
-					}
-				});
+		lvContact.setOnCreateContextMenuListener(new OnCreateContextMenuListener() {
+			@Override
+			public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
+				menu.add(0, 0, 0, "删除联系人");
+			}
+		});
 		lvContact.setOnItemClickListener(new OnItemClickListener() {
 			@Override
-			public void onItemClick(AdapterView<?> parent, View view,
-					int position, long id) {
+			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 				Contact contact = (Contact) adapter.getItem(position);
 				Intent intent = new Intent(ActContact.this, ContactDetail.class);
 				intent.putExtra("contact", contact);
@@ -67,8 +64,7 @@ public class ActContact extends Activity implements View.OnClickListener {
 
 	@Override
 	public boolean onContextItemSelected(MenuItem item) {
-		AdapterContextMenuInfo menuInfo = (AdapterContextMenuInfo) item
-				.getMenuInfo();
+		AdapterContextMenuInfo menuInfo = (AdapterContextMenuInfo) item.getMenuInfo();
 		if (item.getItemId() == 0) {
 			Contact contact = (Contact) adapter.getItem(menuInfo.position);
 			if (DataHelper.deleteContact(this, contact.getId())) {
@@ -141,12 +137,9 @@ public class ActContact extends Activity implements View.OnClickListener {
 			if (convertView == null) {
 				convertView = inflater.inflate(R.layout.listitem_contact, null);
 				listViewItem = new ListViewItem();
-				listViewItem._name = (TextView) convertView
-						.findViewById(R.id.contact_item_name);
-				listViewItem._account = (TextView) convertView
-						.findViewById(R.id.contact_item_account);
-				listViewItem._call = (Button) convertView
-						.findViewById(R.id.contact_item_call);
+				listViewItem._name = (TextView) convertView.findViewById(R.id.contact_item_name);
+				listViewItem._account = (TextView) convertView.findViewById(R.id.contact_item_account);
+				listViewItem._call = (Button) convertView.findViewById(R.id.contact_item_call);
 				// 设置控件集
 				convertView.setTag(listViewItem);
 			} else {
@@ -154,9 +147,7 @@ public class ActContact extends Activity implements View.OnClickListener {
 			}
 
 			final Contact contact = contacts.get(position);
-			Log.e(TAG,
-					"contact " + contact.getName() + " " + contact.getAccount()
-							+ " " + contact.getId());
+			Log.e(TAG, "contact " + contact.getName() + " " + contact.getAccount() + " " + contact.getId());
 			listViewItem._name.setText(contact.getName());
 			listViewItem._account.setText(contact.getAccount());
 			listViewItem._call.setOnClickListener(new View.OnClickListener() {

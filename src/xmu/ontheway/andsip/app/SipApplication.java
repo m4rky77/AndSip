@@ -5,9 +5,11 @@ import xmu.ontheway.andsip.InComingCallReceiver;
 import android.annotation.SuppressLint;
 import android.app.Application;
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.media.AudioManager;
 import android.net.sip.SipAudioCall;
 import android.net.sip.SipException;
 import android.net.sip.SipManager;
@@ -45,6 +47,8 @@ public class SipApplication extends Application {
 			mSipManager = SipManager.newInstance(this);
 		}
 		registerCallReceiver();
+
+		//
 	}
 
 	@Override
@@ -82,27 +86,23 @@ public class SipApplication extends Application {
 		}
 		closeLocalProfile();
 		//
-		SharedPreferences prefs = PreferenceManager
-				.getDefaultSharedPreferences(getBaseContext());
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
 		String username = prefs.getString("namePref", "");
 		String domain = prefs.getString("domainPref", "");
 		String password = prefs.getString("passPref", "");
 
 		try {
-			SipProfile.Builder builder = new SipProfile.Builder(username,
-					domain);
+			SipProfile.Builder builder = new SipProfile.Builder(username, domain);
 			builder.setPassword(password);
 			mSipProfile = builder.build();
 			Log.e(TAG, "profile " + mSipProfile.getUriString());
 
 			Intent i = new Intent();
 			i.setAction("android.andSip.INCOMING_CALL");
-			PendingIntent pi = PendingIntent.getBroadcast(this, 0, i,
-					Intent.FILL_IN_DATA);
+			PendingIntent pi = PendingIntent.getBroadcast(this, 0, i, Intent.FILL_IN_DATA);
 			mSipManager.open(mSipProfile, pi, null);
 			//
-			mSipManager.setRegistrationListener(mSipProfile.getUriString(),
-					registrationListener);
+			mSipManager.setRegistrationListener(mSipProfile.getUriString(), registrationListener);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -116,17 +116,14 @@ public class SipApplication extends Application {
 	 * @return
 	 * @throws SipException
 	 */
-	public SipAudioCall sipStartCalling(String dest,
-			SipAudioCall.Listener listener) throws SipException {
-		return mSipManager.makeAudioCall(mSipProfile.getUriString(), dest,
-				listener, 30);
+	public SipAudioCall sipStartCalling(String dest, SipAudioCall.Listener listener) throws SipException {
+		return mSipManager.makeAudioCall(mSipProfile.getUriString(), dest, listener, 30);
 	}
 
 	public void sipAnswerIncomingCall(Intent callIntent) {
 		Intent answerIntent = new Intent(this, ActCall.class);
 		answerIntent.putExtras(callIntent);
-		answerIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
-				| Intent.FLAG_ACTIVITY_NO_USER_ACTION);
+		answerIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_NO_USER_ACTION);
 		this.startActivity(answerIntent);
 	}
 
@@ -137,8 +134,15 @@ public class SipApplication extends Application {
 	 * @throws SipException
 	 */
 	public void sipEndCalling(SipAudioCall call) {
+
 		if (call != null) {
-			call.close();
+			try {
+				call.endCall();
+				call.close();
+			} catch (SipException e) {
+				e.printStackTrace();
+			}
+
 		}
 	}
 

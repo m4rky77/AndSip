@@ -5,15 +5,39 @@
 
     <TextView
         android:id="@+id/call_tv_status"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="20dp"
         android:text="正在呼叫对方..." />
 
     <Button
-        android:id="@+id/call_btn_end"
+        android:id="@+id/call_btn_speakeron"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:text="结束通话" />
+        android:text="打开免提" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:padding="10dp" >
+
+        <Button
+            android:id="@+id/call_btn_end"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:text="结束通话" />
+
+        <Button
+            android:id="@+id/call_btn_start"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:text="接受通话" />
+    </RelativeLayout>
 
 </RelativeLayout>
